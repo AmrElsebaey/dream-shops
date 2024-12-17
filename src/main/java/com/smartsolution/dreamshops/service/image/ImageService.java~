@@ -1,0 +1,4 @@
+package com.smartsolution.dreamshops.service.image;
+
+public class ImageService {
+}
