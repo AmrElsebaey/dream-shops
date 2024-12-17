@@ -1,0 +1,4 @@
+package com.smartsolution.dreamshops.repository;
+
+public class ImageRepository {
+}

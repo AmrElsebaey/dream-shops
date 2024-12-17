@@ -2,7 +2,6 @@ package com.smartsolution.dreamshops.service.product;
 
 import com.smartsolution.dreamshops.model.Product;
 import com.smartsolution.dreamshops.request.AddProductRequest;
-import com.smartsolution.dreamshops.request.UpdateProductRequest;
 
 import java.util.List;
 import java.util.Optional;
@@ -11,7 +10,7 @@ public interface IProductService {
     Product addProduct (AddProductRequest product);
     Product getProductById (Long id);
     void deleteProductById (Long id);
-    Product updateProduct (UpdateProductRequest product, Long productId);
+    void updateProduct (Product product, Long productId);
     List<Product> getAllProducts();
     List<Product> getProductsByCategory(String category);
     List<Product> getProductsByBrand (String brand);
