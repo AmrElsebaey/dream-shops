@@ -15,4 +15,7 @@ spring:
     hibernate:
       ddl-auto: update
 
+api:
+  prefix: /api/v1
+
 

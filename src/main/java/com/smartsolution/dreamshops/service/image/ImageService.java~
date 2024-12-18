@@ -71,7 +71,7 @@ public class ImageService implements IImageService {
         try {
             image.setFileName(file.getOriginalFilename());
             image.setImage(new SerialBlob(file.getBytes()));
-            return imageRepository.save(image);
+            imageRepository.save(image);
         } catch (IOException | SQLException e) {
             throw new RuntimeException(e.getMessage());
         }
