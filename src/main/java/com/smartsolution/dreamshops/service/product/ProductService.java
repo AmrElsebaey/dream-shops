@@ -72,6 +72,7 @@ public class ProductService implements IProductService {
         existingProduct.setDescription(request.getDescription());
         Category category= categoryRepository.findByName(request.getCategory().getName())
                 .orElseThrow(() -> new CategoryNotFoundException("Category not found: " + request.getCategory().getName()));
+        existingProduct.setCategory(category);
         return existingProduct;
     }
 

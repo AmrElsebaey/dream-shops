@@ -12,8 +12,10 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class CategoryService implements ICategoryService{
+public class CategoryService implements ICategoryService {
+
     private final CategoryRepository categoryRepository;
+
     @Override
     public Category getCategoryById(Long id) {
         return categoryRepository.findById(id)
@@ -33,10 +35,10 @@ public class CategoryService implements ICategoryService{
 
     @Override
     public Category addCategory(Category category) {
-        return Optional.of(category).
-                filter(c -> !categoryRepository.existsByName(c.getName()))
-                .map(categoryRepository::save).
-                orElseThrow(() -> new AlreadyExistsException(category.getName()+ " Already exists!"));
+        return Optional.of(category)
+                .filter(c -> !categoryRepository.existsByName(c.getName()))
+                .map(categoryRepository::save)
+                .orElseThrow(() -> new AlreadyExistsException(category.getName()+ " Already exists!"));
     }
 
     @Override
