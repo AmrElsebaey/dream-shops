@@ -19,8 +19,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ImageService implements IImageService {
+
     private final ImageRepository imageRepository;
     private final ProductService productService;
+
     @Override
     public Image getImageById(Long id) {
         return imageRepository.findById(id).
@@ -29,7 +31,10 @@ public class ImageService implements IImageService {
 
     @Override
     public void deleteImageById(Long id) {
-        imageRepository.deleteById(getImageById(id).getId());
+        imageRepository.findById(id)
+                .ifPresentOrElse(imageRepository::delete,
+                        () -> {throw new ImageNotFoundException("No image found with id: " + id);}
+                );
     }
 
     @Override
@@ -45,8 +50,6 @@ public class ImageService implements IImageService {
                 image.setProduct(product);
 
                 String buildDownloadUrl= "/api/v1/images/image/download/";
-                String downloadUrl= buildDownloadUrl + image.getId();
-                image.setDownloadUrl(downloadUrl);
                 Image savedImage= imageRepository.save(image);
                 savedImage.setDownloadUrl(buildDownloadUrl + savedImage.getId());
                 imageRepository.save(savedImage);
@@ -59,7 +62,6 @@ public class ImageService implements IImageService {
 
             } catch (IOException | SQLException e) {
                 throw new RuntimeException(e.getMessage());
-
             }
         }
         return savedImageDto;
