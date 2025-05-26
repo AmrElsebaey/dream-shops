@@ -39,8 +39,8 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category")
-    public ResponseEntity<ApiResponse> getCategoryById(@RequestParam Long id) {
+    @GetMapping("/category/{id}")
+    public ResponseEntity<ApiResponse> getCategoryById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(
                     new ApiResponse("Category fetched successfully", categoryService.getCategoryById(id))
@@ -54,8 +54,8 @@ public class CategoryController {
         }
     }
 
-    @GetMapping("/category")
-    public ResponseEntity<ApiResponse> getCategoryByName(@RequestParam String name) {
+    @GetMapping("/category/{name}")
+    public ResponseEntity<ApiResponse> getCategoryByName(@PathVariable String name) {
         try {
             return ResponseEntity.ok(
                     new ApiResponse("Category fetched successfully", categoryService.getCategoryByName(name))

@@ -20,13 +20,13 @@ public class ProductController {
 
     private final IProductService productService;
 
-    @PostMapping("/all")
+    @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts() {
             return ResponseEntity.ok(new ApiResponse("Products retrieved successfully", productService.getAllProducts()));
     }
 
-    @GetMapping("/product")
-    public ResponseEntity<ApiResponse> getProductById(@RequestParam Long id) {
+    @GetMapping("/product/{id}")
+    public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         try {
             return ResponseEntity.ok(
                     new ApiResponse("Product fetched successfully", productService.getProductById(id))
@@ -81,7 +81,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/by-brand/and-name")
     public ResponseEntity<ApiResponse> getProductsByBrandAndName(
             @RequestParam String brand,
             @RequestParam String name
@@ -99,7 +99,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/by-category/and-brand")
     public ResponseEntity<ApiResponse> getProductsByCategoryAndBrand(
             @RequestParam String category,
             @RequestParam String brand
@@ -117,7 +117,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/by-brand")
     public ResponseEntity<ApiResponse> getProductsByBrand(
             @RequestParam String brand
     ) {
@@ -134,7 +134,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/by-category")
     public ResponseEntity<ApiResponse> getProductsByCategory(
             @RequestParam String category
     ) {
@@ -151,7 +151,7 @@ public class ProductController {
         }
     }
 
-    @GetMapping
+    @GetMapping("/by-name")
     public ResponseEntity<ApiResponse> getProductsByName(
             @RequestParam String name
     ) {
@@ -165,6 +165,21 @@ public class ProductController {
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error fetching products", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/count/by-brand/and-name")
+    public ResponseEntity<ApiResponse> countProductsByBrandAndName(
+            @RequestParam String brand,
+            @RequestParam String name
+    ) {
+        try {
+            return ResponseEntity.ok(
+                    new ApiResponse("Product count fetched successfully", productService.countProductsByBrandAndName(brand, name))
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR)
+                    .body(new ApiResponse("Error fetching product count", e.getMessage()));
         }
     }
 
