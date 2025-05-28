@@ -8,15 +8,15 @@ import java.util.Optional;
 
 public interface ProductRepository extends JpaRepository<Product, Long> {
 
-    Optional<List<Product>> findByCategoryName (String category);
+    List<Product> findByCategoryName (String category);
 
-    Optional<List<Product>> findByBrand(String brand);
+    List<Product> findByBrand(String brand);
 
-    Optional<List<Product>> findByCategoryNameAndBrand(String category, String brand);
+    List<Product> findByCategoryNameAndBrand(String category, String brand);
 
-    Optional<List<Product>> findByName(String name);
+    List<Product> findByName(String name);
 
-    Optional<List<Product>> findByBrandAndName(String brand, String name);
+    List<Product> findByBrandAndName(String brand, String name);
 
     Long countByBrandAndName(String brand, String name);
 }

@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class ImageDto {
-    private Long imageId;
+    private Long id;
     private String imageName;
     private String downloadUrl;
 }

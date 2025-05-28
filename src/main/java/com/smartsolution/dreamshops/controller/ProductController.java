@@ -1,6 +1,8 @@
 package com.smartsolution.dreamshops.controller;
 
+import com.smartsolution.dreamshops.dto.ProductDto;
 import com.smartsolution.dreamshops.exceptions.ProductNotFoundException;
+import com.smartsolution.dreamshops.model.Product;
 import com.smartsolution.dreamshops.request.AddProductRequest;
 import com.smartsolution.dreamshops.request.UpdateProductRequest;
 import com.smartsolution.dreamshops.response.ApiResponse;
@@ -9,6 +11,8 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -22,14 +26,22 @@ public class ProductController {
 
     @GetMapping("/all")
     public ResponseEntity<ApiResponse> getAllProducts() {
-            return ResponseEntity.ok(new ApiResponse("Products retrieved successfully", productService.getAllProducts()));
+        List<Product> products = productService.getAllProducts();
+        if (products.isEmpty()) {
+            return ResponseEntity.status(NOT_FOUND)
+                    .body(new ApiResponse("No products found", null));
+        }
+        List<ProductDto> productDtos = productService.getConvertProducts(products);
+            return ResponseEntity.ok(new ApiResponse("Products retrieved successfully", productDtos));
     }
 
     @GetMapping("/product/{id}")
     public ResponseEntity<ApiResponse> getProductById(@PathVariable Long id) {
         try {
+            Product product = productService.getProductById(id);
+            ProductDto productDto = productService.convertToDto(product);
             return ResponseEntity.ok(
-                    new ApiResponse("Product fetched successfully", productService.getProductById(id))
+                    new ApiResponse("Product fetched successfully", productDto)
             );
         } catch (ProductNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND)
@@ -87,12 +99,15 @@ public class ProductController {
             @RequestParam String name
     ) {
         try {
+            List<Product> products = productService.getProductsByBrandAndName(brand, name);
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND)
+                        .body(new ApiResponse("No products found for the given brand and name", null));
+            }
+            List<ProductDto> productDtos = productService.getConvertProducts(products);
             return ResponseEntity.ok(
-                    new ApiResponse("Products fetched successfully", productService.getProductsByBrandAndName(brand, name))
+                    new ApiResponse("Products fetched successfully", productDtos)
             );
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error fetching products", e.getMessage()));
@@ -105,12 +120,15 @@ public class ProductController {
             @RequestParam String brand
     ) {
         try {
+            List<Product> products = productService.getProductsByCategoryAndBrand(category, brand);
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND)
+                        .body(new ApiResponse("No products found for the given category and brand", null));
+            }
+            List<ProductDto> productDtos = productService.getConvertProducts(products);
             return ResponseEntity.ok(
-                    new ApiResponse("Products fetched successfully", productService.getProductsByCategoryAndBrand(category, brand))
+                    new ApiResponse("Products fetched successfully", productDtos)
             );
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error fetching products", e.getMessage()));
@@ -122,12 +140,15 @@ public class ProductController {
             @RequestParam String brand
     ) {
         try {
+            List<Product> products = productService.getProductsByBrand(brand);
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND)
+                        .body(new ApiResponse("No products found for the given brand", null));
+            }
+            List<ProductDto> productDtos = productService.getConvertProducts(products);
             return ResponseEntity.ok(
-                    new ApiResponse("Products fetched successfully", productService.getProductsByBrand(brand))
+                    new ApiResponse("Products fetched successfully", productDtos)
             );
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error fetching products", e.getMessage()));
@@ -139,12 +160,15 @@ public class ProductController {
             @RequestParam String category
     ) {
         try {
+            List<Product> products = productService.getProductsByCategory(category);
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND)
+                        .body(new ApiResponse("No products found for the given category", null));
+            }
+            List<ProductDto> productDtos = productService.getConvertProducts(products);
             return ResponseEntity.ok(
-                    new ApiResponse("Products fetched successfully", productService.getProductsByCategory(category))
+                    new ApiResponse("Products fetched successfully", productDtos)
             );
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error fetching products", e.getMessage()));
@@ -156,12 +180,15 @@ public class ProductController {
             @RequestParam String name
     ) {
         try {
+            List<Product> products = productService.getProductsByName(name);
+            if (products.isEmpty()) {
+                return ResponseEntity.status(NOT_FOUND)
+                        .body(new ApiResponse("No products found for the given name", null));
+            }
+            List<ProductDto> productDtos = productService.getConvertProducts(products);
             return ResponseEntity.ok(
-                    new ApiResponse("Products fetched successfully", productService.getProductsByName(name))
+                    new ApiResponse("Products fetched successfully", productDtos)
             );
-        } catch (ProductNotFoundException e) {
-            return ResponseEntity.status(NOT_FOUND)
-                    .body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error fetching products", e.getMessage()));
