@@ -1,17 +1,14 @@
 package com.smartsolution.dreamshops.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
 @Setter
-@RequiredArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 public class Cart {
@@ -22,5 +19,28 @@ public class Cart {
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> cartItem;
+    private List<CartItem> items;
+
+    public void addCartItem(CartItem item) {
+        items.add(item);
+        item.setCart(this);
+        updateTotalAmount();
+    }
+
+    public void removeCartItem(CartItem item) {
+        items.remove(item);
+        item.setCart(null);
+        updateTotalAmount();
+    }
+
+    public void updateTotalAmount() {
+        this.totalAmount = items.stream()
+                .map(item -> {
+                    BigDecimal unitPrice = item.getUnitPrice();
+                    if (unitPrice == null) {
+                        unitPrice = BigDecimal.ZERO;
+                    }
+                    return unitPrice.multiply(BigDecimal.valueOf(item.getQuantity()));
+                }).reduce(BigDecimal.ZERO, BigDecimal::add);
+    }
 }
