@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -19,7 +20,7 @@ public class Cart {
     private BigDecimal totalAmount = BigDecimal.ZERO;
 
     @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<CartItem> items;
+    private List<CartItem> items = new ArrayList<>();
 
     public void addCartItem(CartItem item) {
         items.add(item);
@@ -30,7 +31,6 @@ public class Cart {
     public void removeCartItem(CartItem item) {
         items.remove(item);
         item.setCart(null);
-        updateTotalAmount();
     }
 
     public void updateTotalAmount() {

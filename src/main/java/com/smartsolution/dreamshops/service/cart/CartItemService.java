@@ -10,7 +10,6 @@ import com.smartsolution.dreamshops.service.product.IProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -18,8 +17,9 @@ public class CartItemService implements ICartItemService{
 
     private final CartItemRepository cartItemRepository;
     private final IProductService productService;
-    private final CartService cartService;
+    private final ICartService cartService;
     private final CartRepository cartRepository;
+
 
 
     @Override
@@ -43,24 +43,20 @@ public class CartItemService implements ICartItemService{
             cartItem.setProduct(product);
             cartItem.setQuantity(quantity);
             cartItem.setUnitPrice(product.getPrice());
+            cart.addCartItem(cartItem);
         } else {
             // If the cart item exists, update the quantity and total price
             cartItem.setQuantity(cartItem.getQuantity() + quantity);
         }
         cartItem.setTotalPrice();
-        cart.addCartItem(cartItem);
-        cartItemRepository.save(cartItem);
+        cart.updateTotalAmount();
         cartRepository.save(cart);
     }
 
     @Override
     public void removeItemFromCart(Long cartId, Long productId) {
         Cart cart = cartService.getCartById(cartId);
-        CartItem cartItem = cart.getItems()
-                .stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst()
-                .orElseThrow(() -> new CartItemNotFoundException("Product not found"));
+        CartItem cartItem = this.getCartItem(cartId, productId);
         cart.removeCartItem(cartItem);
         cartRepository.save(cart);
     }
@@ -78,5 +74,16 @@ public class CartItemService implements ICartItemService{
                     item.setTotalPrice();
                 });
         cartService.getCartById(cartId).updateTotalAmount();
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public CartItem getCartItem(Long cartId, Long productId) {
+        Cart cart = cartService.getCartById(cartId);
+        return cart.getItems()
+                .stream()
+                .filter(item -> item.getProduct().getId().equals(productId))
+                .findFirst()
+                .orElseThrow(() -> new CartItemNotFoundException("Item not found"));
     }
 }
