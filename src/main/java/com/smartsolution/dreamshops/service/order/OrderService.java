@@ -1,5 +1,6 @@
 package com.smartsolution.dreamshops.service.order;
 
+import com.smartsolution.dreamshops.dto.OrderDto;
 import com.smartsolution.dreamshops.enums.OrderStatus;
 import com.smartsolution.dreamshops.exceptions.OrderNotFoundException;
 import com.smartsolution.dreamshops.model.Cart;
@@ -11,6 +12,7 @@ import com.smartsolution.dreamshops.repository.ProductRepository;
 import com.smartsolution.dreamshops.service.cart.CartService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -25,6 +27,7 @@ public class OrderService implements IOrderService {
     private final OrderRepository orderRepository;
     private final ProductRepository productRepository;
     private final CartService cartService;
+    private final ModelMapper modelMapper;
 
     @Transactional
     @Override
@@ -80,5 +83,17 @@ public class OrderService implements IOrderService {
     @Override
     public List<Order> getOrdersByUserId(Long userId) {
         return orderRepository.findByUserId(userId);
+    }
+
+    @Override
+    public OrderDto convertToDto(Order order) {
+        return modelMapper.map(order, OrderDto.class);
+    }
+
+    @Override
+    public List<OrderDto> convertToDtoList(List<Order> orders) {
+        return orders.stream()
+                .map(this::convertToDto)
+                .toList();
     }
 }
