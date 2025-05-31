@@ -46,4 +46,9 @@ public class CartService implements ICartService {
         return modelMapper.map(cart, CartDto.class);
     }
 
+    @Override
+    public Cart getCartByUserId(Long userId) {
+        return cartRepository.findByUserId(userId)
+                .orElseThrow(() -> new CartNotFoundException("Cart not found for user with id: " + userId));
+    }
 }
