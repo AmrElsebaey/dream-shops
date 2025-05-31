@@ -2,6 +2,7 @@ package com.smartsolution.dreamshops.service.cart;
 
 import com.smartsolution.dreamshops.dto.CartDto;
 import com.smartsolution.dreamshops.model.Cart;
+import com.smartsolution.dreamshops.model.User;
 
 import java.math.BigDecimal;
 
@@ -11,7 +12,7 @@ public interface ICartService {
     void clearCart(Long cartId);
     BigDecimal getTotalPrice(Long cartId);
 
-    Long initializeNewCart();
+    Cart initializeNewCart(User user);
 
     CartDto convertToDto(Cart cart);
 

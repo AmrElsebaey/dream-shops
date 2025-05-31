@@ -1,6 +1,7 @@
 package com.smartsolution.dreamshops.controller;
 
 import com.smartsolution.dreamshops.dto.ProductDto;
+import com.smartsolution.dreamshops.exceptions.AlreadyExistsException;
 import com.smartsolution.dreamshops.exceptions.ProductNotFoundException;
 import com.smartsolution.dreamshops.model.Product;
 import com.smartsolution.dreamshops.request.AddProductRequest;
@@ -14,8 +15,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
+import static org.springframework.http.HttpStatus.*;
 
 @RestController
 @RequestMapping("/products")
@@ -58,7 +58,11 @@ public class ProductController {
             return ResponseEntity.ok(
                     new ApiResponse("Product added successfully", productService.addProduct(request))
             );
-        } catch (Exception e) {
+        } catch (AlreadyExistsException e) {
+            return ResponseEntity.status(CONFLICT)
+                    .body(new ApiResponse(e.getMessage(), null));
+        }
+        catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR)
                     .body(new ApiResponse("Error adding product", e.getMessage()));
         }

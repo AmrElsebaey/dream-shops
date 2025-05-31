@@ -2,9 +2,11 @@ package com.smartsolution.dreamshops.controller;
 
 import com.smartsolution.dreamshops.exceptions.CartNotFoundException;
 import com.smartsolution.dreamshops.model.Cart;
+import com.smartsolution.dreamshops.model.User;
 import com.smartsolution.dreamshops.response.ApiResponse;
 import com.smartsolution.dreamshops.service.cart.ICartItemService;
 import com.smartsolution.dreamshops.service.cart.ICartService;
+import com.smartsolution.dreamshops.service.user.IUserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,16 +20,16 @@ public class CartItemController {
 
     private final ICartItemService cartItemService;
     private final ICartService cartService;
+    private final IUserService userService;
 
     @PostMapping("/item/add")
-    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam(required = false) Long cartId,
-                                                     @RequestParam Long productId,
+    public ResponseEntity<ApiResponse> addItemToCart(@RequestParam Long productId,
                                                      @RequestParam int quantity) {
         try {
-            if (cartId == null) {
-                cartId = cartService.initializeNewCart();
-            }
-            cartItemService.addItemToCart(cartId, productId, quantity);
+            User user = userService.findUserById(1L);
+            Cart cart = cartService.initializeNewCart(user);
+
+            cartItemService.addItemToCart(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Item added to cart successfully", null));
         } catch (CartNotFoundException e) {
             return ResponseEntity.status(NOT_FOUND).body(new ApiResponse(e.getMessage(), null));

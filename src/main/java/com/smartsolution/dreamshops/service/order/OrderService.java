@@ -2,6 +2,7 @@ package com.smartsolution.dreamshops.service.order;
 
 import com.smartsolution.dreamshops.dto.OrderDto;
 import com.smartsolution.dreamshops.enums.OrderStatus;
+import com.smartsolution.dreamshops.exceptions.CartNotFoundException;
 import com.smartsolution.dreamshops.exceptions.OrderNotFoundException;
 import com.smartsolution.dreamshops.model.Cart;
 import com.smartsolution.dreamshops.model.Order;
@@ -33,6 +34,9 @@ public class OrderService implements IOrderService {
     @Override
     public Order placeOrder(Long userId) {
         Cart cart = cartService.getCartByUserId(userId);
+        if (cart == null) {
+            throw new CartNotFoundException("No cart found");
+        }
 
         Order order = createOrder(cart);
         List<OrderItem> orderItems = createOrderItems(order, cart);

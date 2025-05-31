@@ -2,6 +2,7 @@ package com.smartsolution.dreamshops.service.product;
 
 import com.smartsolution.dreamshops.dto.ImageDto;
 import com.smartsolution.dreamshops.dto.ProductDto;
+import com.smartsolution.dreamshops.exceptions.AlreadyExistsException;
 import com.smartsolution.dreamshops.exceptions.CategoryNotFoundException;
 import com.smartsolution.dreamshops.exceptions.ProductNotFoundException;
 import com.smartsolution.dreamshops.model.Category;
@@ -17,6 +18,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,10 +27,12 @@ public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
     private final ModelMapper modelMapper;
-    private final ImageRepository imageRepository;
 
     @Override
     public Product addProduct(AddProductRequest request) {
+        if (productExists(request.getName(), request.getBrand())) {
+            throw new AlreadyExistsException("Product with name " + request.getName() + " and brand " + request.getBrand() + " already exists, You may update this product instead!");
+        }
         Category category = categoryRepository.findByName(request.getCategory().getName()).
                 orElseGet( () -> {
                     Category newCategory= new Category(request.getCategory().getName());
@@ -36,6 +40,10 @@ public class ProductService implements IProductService {
                 });
         request.setCategory(category);
         return productRepository.save(createProduct(request, category));
+    }
+
+    private boolean productExists(String name, String brand) {
+        return productRepository.existsByNameAndBrand(name,brand);
     }
 
     private Product createProduct(AddProductRequest request, Category category) {
