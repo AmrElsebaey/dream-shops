@@ -1,11 +1,14 @@
 package com.smartsolution.dreamshops.service.user;
 
+import com.smartsolution.dreamshops.dto.UserDto;
 import com.smartsolution.dreamshops.exceptions.AlreadyExistsException;
 import com.smartsolution.dreamshops.exceptions.UserNotFoundException;
 import com.smartsolution.dreamshops.model.User;
+import com.smartsolution.dreamshops.repository.UserRepository;
 import com.smartsolution.dreamshops.request.CreateUserRequest;
 import com.smartsolution.dreamshops.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,6 +18,7 @@ import java.util.Optional;
 public class UserService implements IUserService {
 
     private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
 
     @Override
@@ -53,5 +57,10 @@ public class UserService implements IUserService {
     public User findUserById(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+    }
+
+    @Override
+    public UserDto convertToDto(User user) {
+        return modelMapper.map(user, UserDto.class);
     }
 }
