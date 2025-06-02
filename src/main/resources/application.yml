@@ -24,3 +24,8 @@ server:
   servlet:
     context-path: /api/v1
 
+auth:
+  token:
+    secret: 6b101a9d2471a7046058cacbb8651a550ee6397d6a0348e7fbd3d5e0986cf4ea84aed32c2c6f627df002816a54a6e02788f34fecc92aa5d3853465ddd4df8ffd
+    expiration: 3600000 # 1 hour in milliseconds
+
