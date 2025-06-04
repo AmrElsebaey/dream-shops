@@ -11,6 +11,8 @@ import com.smartsolution.dreamshops.service.product.IProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import static org.springframework.http.HttpStatus.*;
 @RestController
 @RequestMapping("/products")
 @RequiredArgsConstructor
+@EnableMethodSecurity
 public class ProductController {
 
     private final IProductService productService;
@@ -52,6 +55,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PostMapping("/add")
     public ResponseEntity<ApiResponse> createProduct(@RequestBody @Valid AddProductRequest request) {
         try {
@@ -68,6 +72,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @PutMapping("/update/{id}")
     public ResponseEntity<ApiResponse> updateProduct(@RequestBody @Valid UpdateProductRequest request, @PathVariable Long id) {
         try {
@@ -83,6 +88,7 @@ public class ProductController {
         }
     }
 
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<ApiResponse> deleteProduct(@PathVariable Long id) {
         try {

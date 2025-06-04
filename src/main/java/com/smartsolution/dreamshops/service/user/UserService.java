@@ -9,6 +9,9 @@ import com.smartsolution.dreamshops.request.CreateUserRequest;
 import com.smartsolution.dreamshops.request.UpdateUserRequest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -19,6 +22,7 @@ public class UserService implements IUserService {
 
     private final UserRepository userRepository;
     private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -30,7 +34,7 @@ public class UserService implements IUserService {
                     user.setFirstName(request.getFirstName());
                     user.setLastName(request.getLastName());
                     user.setEmail(request.getEmail());
-                    user.setPassword(request.getPassword()); // Consider hashing the password
+                    user.setPassword(passwordEncoder.encode(request.getPassword())); // Consider hashing the password
                     return userRepository.save(user);
                 }).orElseThrow(() -> new AlreadyExistsException("User with email " + request.getEmail() + " already exists."));
     }
@@ -62,5 +66,12 @@ public class UserService implements IUserService {
     @Override
     public UserDto convertToDto(User user) {
         return modelMapper.map(user, UserDto.class);
+    }
+
+    @Override
+    public User getAuthenticatedUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName();
+        return userRepository.findByEmail(email);
     }
 }

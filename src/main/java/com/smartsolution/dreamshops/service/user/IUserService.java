@@ -13,4 +13,6 @@ public interface IUserService {
     User findUserById(Long id);
 
     UserDto convertToDto(User user);
+
+    User getAuthenticatedUser();
 }
